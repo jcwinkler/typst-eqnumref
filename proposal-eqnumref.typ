@@ -30,6 +30,22 @@
 // Links in blue
 #show link: set text(fill: blue)
 
+// Since most of the equation numbering stuff is not yet implemented in typst
+// we render it manually using this table
+#let eqtable(number_align: right, ..content) = {
+  let al = (center, right)
+  let col = (90%, 10%)
+  if number_align == left {
+    al = (left, center)
+    col = (10%, 90%)
+  }
+  table(
+    columns: col,
+    align: al,
+    stroke: none,
+    ..content)
+}
+
 // Some helpers
 #let Covers = {
   text(weight: "bold", fill: green, "Covers:")
@@ -70,24 +86,17 @@ The following general use cases must be covered by an implementation:
 
 + Set of aligned and partially numbered subequations
   // Since the stuff we propose here is not implemented yet, we format it manually in tables
-  // A function doing this would be nice here, e.g. #eqref(content)
-  #table(
-  columns: (90%, 10%),
-  align: (center, right),
-  stroke: none,
-  $#h(3.2em) a = b +c$, [],
-  $#h(4.2em) = d + g$,  [(1.1a)],
-  $z + y = x$,          [(1.1b)]
+  #eqtable(
+    $#h(3.2em) a = b +c$, [],
+    $#h(4.2em) = d + g$,  [(1.1a)],
+    $z + y = x$,          [(1.1b)]
 )
 
 + Set of aligned and partially numbered ordinary equations
-  #table(
-  columns: (90%, 10%),
-  align: (center, right),
-  stroke: none,
-  $i = j$,               [(1.2)],
-  $#h(1.4em) w = a + b$, [],
-  $#h(0.8em) = c$,       [(1.3)]
+  #eqtable(
+    $i = j$,               [(1.2)],
+    $#h(1.4em) w = a + b$, [],
+    $#h(0.8em) = c$,       [(1.3)]
   )
 
 + Referencing:
@@ -100,50 +109,32 @@ The following general use cases must be covered by an implementation:
   + Reference to set of ordinary equations: (1.2), (1.3)
   
   + Referencing in equation itself:
-    #table(
-    columns: (90%, 10%),
-    align: (center, right),
-    stroke: none,
-    $z = a =^#[(1.1a)] d + g$,               [(1.4)]
+    #eqtable(
+      $z = a =^#[(1.1a)] d + g$,               [(1.4)]
     )
 
 
 == Advanced subequations
 + Subequations distributed over multiple paragraphs:
-    #table(
-    columns: (90%, 10%),
-    align: (center, right),
-    stroke: none,
-    $a = b$,                 [(1.5a)]
+    #eqtable(
+      $a = b$,                 [(1.5a)]
     )
   Another subequation after some text
-    #table(
-    columns: (90%, 10%),
-    align: (center, right),
-    stroke: none,
-    $d + c = e + f + x + z$,  [(1.5b)]
+    #eqtable(
+      $d + c = e + f + x + z$,  [(1.5b)]
     )
   Normal numbering continues:
-    #table(
-    columns: (90%, 10%),
-    align: (center, right),
-    stroke: none,
-    $e = f$,                   [(1.6)]
+    #eqtable(
+      $e = f$,                   [(1.6)]
     )
 
 
 + It should be possible to align subequations if text is written between them:
-    #table(
-      columns: (90%, 10%),
-      align: (center, right),
-      stroke: none,
+    #eqtable(
       $a = b$,                 [(1.7a)]
     )
   Another subequation after some text
-    #table(
-      columns: (90%, 10%),
-      align: (center, right),
-      stroke: none,
+    #eqtable(
       $#h(3.5em) d + c = e + f + x + z$,  [(1.7b)]
     )
 
@@ -151,10 +142,7 @@ The following general use cases must be covered by an implementation:
 == Advanced equation typesetting    
 + It should be possible to set one number per equation system only 
   (align + split in LaTeX + AmsMath):
-  #table(
-    columns: (90%, 10%),
-    align: (center, horizon + right),
-    stroke: none,
+  #eqtable(
     $
       A &= B + C \
       D + E &= F + G
@@ -163,10 +151,7 @@ The following general use cases must be covered by an implementation:
 
 + It should be possible to enable multi-line equations wich are nicely 
   typesetted (multline in LaTeX  + AmsMath):
-  #table(
-    columns: (90%, 10%),
-    align: (center, horizon + right),
-    stroke: none,
+  #eqtable(
     $
       a + b + c + d + e + f + g + h + i + j = \
       #h(10em) k + l + m + n + o + p + q + r + s + t + u
@@ -174,10 +159,8 @@ The following general use cases must be covered by an implementation:
   )
 
 + It should be possible to place equation numbers to the left:
-  #table(
-    columns: (10%, 90%),
-    align: (left, center),
-    stroke: none,
+  #eqtable(
+    number_align: left,
     [(1.10)], $a = b$
   )
 
